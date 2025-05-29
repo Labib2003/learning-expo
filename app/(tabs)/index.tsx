@@ -25,7 +25,7 @@ export default function HomeScreen() {
       <View className="w-full gap-2">
         <View className="flex flex-row gap-2">
           <Pressable
-            className="flex-grow"
+            className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white p-3 transition-all active:scale-95"
             onPress={async () => {
               const result = await launchCameraAsync({
                 mediaTypes: ['images'],
@@ -34,20 +34,12 @@ export default function HomeScreen() {
               });
               if (result.assets) setSelectedImage(result.assets[0].uri);
             }}>
-            {({ pressed }) => (
-              <View
-                className={
-                  'flex flex-row items-center justify-center gap-3 rounded-lg bg-white p-3 transition-all ' +
-                  (pressed ? 'scale-95' : 'scale-100')
-                }>
-                <CameraIcon />
-                <Text className="text-center font-semibold">Take A Photo</Text>
-              </View>
-            )}
+            <CameraIcon />
+            <Text className="text-center font-semibold">Take A Photo</Text>
           </Pressable>
 
           <Pressable
-            className="w-1/2"
+            className="flex flex-row items-center justify-center gap-3 rounded-lg bg-white p-3 transition-all active:scale-95"
             onPress={async () => {
               const result = await launchImageLibraryAsync({
                 mediaTypes: ['images'],
@@ -56,29 +48,13 @@ export default function HomeScreen() {
               });
               if (result.assets) setSelectedImage(result.assets[0].uri);
             }}>
-            {({ pressed }) => (
-              <View
-                className={
-                  'flex flex-row items-center justify-center gap-3 rounded-lg bg-white p-3 transition-all ' +
-                  (pressed ? 'scale-95' : 'scale-100')
-                }>
-                <ImageIcon />
-                <Text className="text-center font-semibold">Choose A Photo</Text>
-              </View>
-            )}
+            <ImageIcon />
+            <Text className="text-center font-semibold">Choose A Photo</Text>
           </Pressable>
         </View>
 
-        <Pressable onPress={() => alert('Photo selected!')}>
-          {({ pressed }) => (
-            <View
-              className={
-                'w-full rounded-lg p-3 transition-all ' +
-                (pressed ? 'scale-95 bg-slate-900' : 'scale-100 bg-slate-800')
-              }>
-              <Text className="text-center font-semibold text-white">Use This Photo</Text>
-            </View>
-          )}
+        <Pressable className="w-full rounded-lg bg-slate-800 p-3 transition-all active:scale-95 active:bg-slate-900">
+          <Text className="text-center font-semibold text-white">Use This Photo</Text>
         </Pressable>
       </View>
     </View>
