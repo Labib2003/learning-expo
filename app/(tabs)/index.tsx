@@ -1,5 +1,5 @@
 import { CameraIcon, ImageDownIcon, ImageIcon, PlusIcon, RotateCcwIcon } from 'lucide-react-native';
-import { Pressable, Text, View } from 'react-native';
+import { ImageSourcePropType, Pressable, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { launchImageLibraryAsync, launchCameraAsync } from 'expo-image-picker';
 // @ts-expect-error: No types for this image
@@ -11,10 +11,11 @@ export default function HomeScreen() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [showEditMenu, setShowEditMenu] = useState(false);
   const [openStickerModal, setOpenStickerModal] = useState(false);
+  const [pickedSticker, setPickedSticker] = useState<ImageSourcePropType>();
 
   return (
     <View className="flex h-full items-center justify-center gap-3 bg-slate-700 p-5">
-      <View className="w-full flex-1 overflow-hidden">
+      <View className="relative w-full flex-1 overflow-hidden">
         <Image
           source={selectedImage ?? placeholderImage}
           style={{
@@ -23,6 +24,9 @@ export default function HomeScreen() {
             resizeMode: 'contain',
           }}
         />
+        {pickedSticker && (
+          <Image source={pickedSticker} style={{ width: 100, height: 100, position: 'absolute' }} />
+        )}
       </View>
 
       {showEditMenu ? (
@@ -30,7 +34,7 @@ export default function HomeScreen() {
           <View>
             <Pressable
               onPress={() => setShowEditMenu(false)}
-              className="flex flex-col items-center bg-transparent">
+              className="flex flex-col items-center bg-transparent transition-transform active:scale-95">
               <RotateCcwIcon color={'white'} />
               <Text className="font-semibold text-white">Reset</Text>
             </Pressable>
@@ -38,7 +42,7 @@ export default function HomeScreen() {
 
           <View>
             <Pressable
-              className="flex aspect-square items-center justify-center rounded-full border-2 border-yellow-400 p-2"
+              className="flex aspect-square items-center justify-center rounded-full border-2 border-yellow-400 p-2 transition-transform active:scale-95"
               onPress={() => setOpenStickerModal(true)}>
               <View className="rounded-full bg-white p-2">
                 <PlusIcon size={48} />
@@ -47,7 +51,7 @@ export default function HomeScreen() {
           </View>
 
           <View>
-            <Pressable className="flex flex-col items-center gap-1 bg-transparent">
+            <Pressable className="flex flex-col items-center gap-1 bg-transparent transition-transform active:scale-95">
               <ImageDownIcon color={'white'} />
               <Text className="font-semibold text-white">Save</Text>
             </Pressable>
@@ -93,7 +97,11 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <StickerModal visible={openStickerModal} setVisible={setOpenStickerModal} />
+      <StickerModal
+        visible={openStickerModal}
+        setVisible={setOpenStickerModal}
+        setSelectedSticker={setPickedSticker}
+      />
     </View>
   );
 }
