@@ -1,5 +1,5 @@
 import { CameraIcon, ImageDownIcon, ImageIcon, PlusIcon, RotateCcwIcon } from 'lucide-react-native';
-import { ImageSourcePropType, Pressable, Text, View } from 'react-native';
+import { Alert, ImageSourcePropType, Pressable, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { launchImageLibraryAsync, launchCameraAsync } from 'expo-image-picker';
 import { useRef, useState } from 'react';
@@ -27,7 +27,10 @@ export default function HomeScreen() {
   return (
     <GestureHandlerRootView>
       <View className="flex h-full items-center justify-center gap-3 bg-slate-700 p-5">
-        <View ref={finalImageRef} collapsable className="relative w-full flex-1 overflow-hidden">
+        <View
+          ref={finalImageRef}
+          collapsable={false}
+          className="relative w-full flex-1 overflow-hidden">
           <Image
             source={selectedImage ?? placeholderImage}
             style={{
@@ -48,38 +51,46 @@ export default function HomeScreen() {
         </View>
 
         {showEditMenu ? (
-          <View className="flex w-full flex-row items-center justify-evenly">
-            <View>
-              <Pressable
-                onPress={() => setShowEditMenu(false)}
-                className="flex flex-col items-center bg-transparent transition-transform active:scale-95">
-                <RotateCcwIcon color={'white'} />
-                <Text className="font-semibold text-white">Reset</Text>
-              </Pressable>
-            </View>
+          <View>
+            <Text className="mb-5 text-center font-semibold text-white">
+              Drag to move, double tap to scale, triple tap to delete
+            </Text>
+            <View className="flex w-full flex-row items-center justify-between px-10">
+              <View>
+                <Pressable
+                  onPress={() => {
+                    setShowEditMenu(false);
+                    setPickedStickers([]);
+                  }}
+                  className="flex flex-col items-center bg-transparent transition-transform active:scale-95">
+                  <RotateCcwIcon color={'white'} />
+                  <Text className="font-semibold text-white">Reset</Text>
+                </Pressable>
+              </View>
 
-            <View>
-              <Pressable
-                className="flex aspect-square items-center justify-center rounded-full border-2 border-yellow-400 p-2 transition-transform active:scale-95"
-                onPress={() => setOpenStickerModal(true)}>
-                <View className="rounded-full bg-white p-2">
-                  <PlusIcon size={48} />
-                </View>
-              </Pressable>
-            </View>
+              <View>
+                <Pressable
+                  className="flex aspect-square items-center justify-center rounded-full border-2 border-yellow-400 p-2 transition-transform active:scale-95"
+                  onPress={() => setOpenStickerModal(true)}>
+                  <View className="rounded-full bg-white p-2">
+                    <PlusIcon size={48} />
+                  </View>
+                </Pressable>
+              </View>
 
-            <View>
-              <Pressable
-                onPress={async () => {
-                  const localUri = await captureRef(finalImageRef);
-                  if (!localUri) return;
-                  await saveToLibraryAsync(localUri);
-                  alert('Image saved to gallary!');
-                }}
-                className="flex flex-col items-center gap-1 bg-transparent transition-transform active:scale-95">
-                <ImageDownIcon color={'white'} />
-                <Text className="font-semibold text-white">Save</Text>
-              </Pressable>
+              <View>
+                <Pressable
+                  onPress={async () => {
+                    const localUri = await captureRef(finalImageRef, { quality: 1 });
+                    if (!localUri) return;
+                    await saveToLibraryAsync(localUri);
+                    Alert.alert('Image saved to gallary!');
+                  }}
+                  className="flex flex-col items-center gap-1 bg-transparent transition-transform active:scale-95">
+                  <ImageDownIcon color={'white'} />
+                  <Text className="font-semibold text-white">Save</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         ) : (
