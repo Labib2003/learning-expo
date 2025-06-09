@@ -54,7 +54,10 @@ export default function StickerModal({
                 <Pressable
                   key={index}
                   className="transition-transform active:scale-95"
-                  onPress={() => setSelectedSticker(item)}>
+                  onPress={() => {
+                    setSelectedSticker(item);
+                    setVisible(false);
+                  }}>
                   <Image source={item} style={{ height: 100, width: 100 }} />
                 </Pressable>
               )}
