@@ -1,13 +1,18 @@
-import { ImageSourcePropType } from 'react-native';
+import { Dispatch, SetStateAction } from 'react';
+import { Alert, ImageSourcePropType } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function Sticker({
   source,
   size: initialSize = 100,
+  idx,
+  setPickedStickers,
 }: {
   source: ImageSourcePropType;
   size?: number;
+  idx: number;
+  setPickedStickers: Dispatch<SetStateAction<ImageSourcePropType[]>>;
 }) {
   const stickerSize = useSharedValue(initialSize);
 
@@ -25,6 +30,21 @@ export default function Sticker({
     height: withSpring(stickerSize.value),
   }));
 
+  const handleTripleTap = Gesture.Tap()
+    .numberOfTaps(3)
+    .onEnd(() => {
+      Alert.alert('Are your sure?', 'Are you sure you want to remove this sticker?', [
+        {
+          text: 'Yes',
+          onPress: () => setPickedStickers((ps) => ps.filter((_, i) => i !== idx)),
+        },
+        {
+          text: 'No',
+        },
+      ]);
+    })
+    .runOnJS(true);
+
   const handlePan = Gesture.Pan().onChange((e) => {
     positionX.value += e.changeX;
     positionY.value += e.changeY;
@@ -36,7 +56,7 @@ export default function Sticker({
   return (
     <GestureDetector gesture={handlePan}>
       <Animated.View className="absolute" style={[containerStyle]}>
-        <GestureDetector gesture={handleDoubleTap}>
+        <GestureDetector gesture={Gesture.Exclusive(handleTripleTap, handleDoubleTap)}>
           <Animated.Image
             source={source}
             resizeMode="contain"

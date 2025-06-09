@@ -19,11 +19,11 @@ import sticker6 from '../assets/images/emoji6.png';
 export default function StickerModal({
   visible,
   setVisible,
-  setSelectedSticker,
+  setSelectedStickers,
 }: {
   visible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
-  setSelectedSticker: Dispatch<SetStateAction<ImageSourcePropType | undefined>>;
+  setSelectedStickers: Dispatch<SetStateAction<ImageSourcePropType[]>>;
 }) {
   const [stickers] = useState<ImageSourcePropType[]>([
     sticker1,
@@ -55,7 +55,7 @@ export default function StickerModal({
                   key={index}
                   className="transition-transform active:scale-95"
                   onPress={() => {
-                    setSelectedSticker(item);
+                    setSelectedStickers((ps) => [...ps, item]);
                     setVisible(false);
                   }}>
                   <Image source={item} style={{ height: 100, width: 100 }} />

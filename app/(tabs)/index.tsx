@@ -17,7 +17,7 @@ export default function HomeScreen() {
   const [selectedImage, setSelectedImage] = useState<string>();
   const [showEditMenu, setShowEditMenu] = useState(false);
   const [openStickerModal, setOpenStickerModal] = useState(false);
-  const [pickedSticker, setPickedSticker] = useState<ImageSourcePropType>();
+  const [pickedStickers, setPickedStickers] = useState<ImageSourcePropType[]>([]);
   const finalImageRef = useRef<View>(null);
 
   if (status === null) {
@@ -37,7 +37,14 @@ export default function HomeScreen() {
             }}
           />
 
-          {pickedSticker && <Sticker source={pickedSticker} />}
+          {pickedStickers.map((sticker, idx) => (
+            <Sticker
+              key={sticker.toString()}
+              source={sticker}
+              idx={idx}
+              setPickedStickers={setPickedStickers}
+            />
+          ))}
         </View>
 
         {showEditMenu ? (
@@ -118,7 +125,7 @@ export default function HomeScreen() {
         <StickerModal
           visible={openStickerModal}
           setVisible={setOpenStickerModal}
-          setSelectedSticker={setPickedSticker}
+          setSelectedStickers={setPickedStickers}
         />
       </View>
     </GestureHandlerRootView>
